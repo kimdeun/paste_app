@@ -1,7 +1,5 @@
 package ru.copypaste.paste.api.response;
 
-import ru.copypaste.paste.api.request.AccessStatus;
-
 public class PasteBoxResponse {
     private String data;
     private boolean isPublic;

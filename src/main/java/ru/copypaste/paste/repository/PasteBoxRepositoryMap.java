@@ -1,45 +1,46 @@
 package ru.copypaste.paste.repository;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import ru.copypaste.paste.exeption.NotFountEntityException;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Repository
+@Qualifier("PasteBoxRepositoryMap")
 public class PasteBoxRepositoryMap implements PasteBoxRepository {
-    private final Map<String, PasteBoxEntity> vault = new ConcurrentHashMap<>();
-    @Override
-    public PasteBoxEntity getByHash(String hash) {
-        PasteBoxEntity pasteBoxEntity = vault.get(hash);
+    private final Map<String, PasteEntity> vault = new ConcurrentHashMap<>();
 
-        if (pasteBoxEntity == null) {
+    @Override
+    public PasteEntity getByHash(String hash) {
+        PasteEntity pasteEntity = vault.get(hash);
+
+        if (pasteEntity == null) {
             throw new NotFountEntityException("PasteBox not found with hash = " + hash);
         }
 
-        return pasteBoxEntity;
+        return pasteEntity;
     }
 
     @Override
-    public List<PasteBoxEntity> getListOfPublicAndAlive(int amount) {
+    public List<PasteEntity> getListOfPublicAndAlive(int amount) {
         LocalDateTime now = LocalDateTime.now();
 
         return vault.values().stream()
-                .filter(PasteBoxEntity::isPublic)
-                .filter(pasteBoxEntity -> pasteBoxEntity.getLifeTime().isAfter(now))
-                .sorted(Comparator.comparing(PasteBoxEntity::getId).reversed())
+                .filter(PasteEntity::isPublic)
+                .filter(pasteEntity -> pasteEntity.getLifeTime().isAfter(now))
+                .sorted(Comparator.comparing(PasteEntity::getId).reversed())
                 .limit(amount)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void add(PasteBoxEntity pasteBoxEntity) {
-        vault.put(pasteBoxEntity.getHash(), pasteBoxEntity);
+    public void add(PasteEntity pasteEntity) {
+        vault.put(pasteEntity.getHash(), pasteEntity);
     }
 }

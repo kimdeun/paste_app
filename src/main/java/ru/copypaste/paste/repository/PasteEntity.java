@@ -1,19 +1,25 @@
 package ru.copypaste.paste.repository;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+
 import java.time.LocalDateTime;
 
-public class PasteBoxEntity {
-    private int id;
+public class PasteEntity {
+    @Id
+    private Integer id;
     private String data;
     private String hash;
+    @Column("life_time")
     private LocalDateTime lifeTime;
+    @Column("is_public")
     private boolean isPublic;
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
